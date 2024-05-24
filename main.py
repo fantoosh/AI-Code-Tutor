@@ -5,6 +5,7 @@ import streamlit as st
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
 import text_to_speech as tts
+from config import read_config
 from explainer import retrieve_code_explanation, retrieve_code_language
 
 
@@ -54,6 +55,9 @@ def choose_voice(voices: list):
 
 
 def main() -> None:
+    # read the configuration settings from a JSON file
+    config = read_config("./config.json")
+
     display_header()
 
     voices = tts.get_voices(client=polly)
@@ -70,7 +74,7 @@ def main() -> None:
                 message=language,
                 voices=voices,
                 voice_name=selected_voice,
-                mp3_filename="language.mp3",
+                mp3_filename=config.language_audio_dir,
             )
         with st.spinner(
             text=(
@@ -83,7 +87,7 @@ def main() -> None:
                 message=explanation,
                 voices=voices,
                 voice_name=selected_voice,
-                mp3_filename="explanation.mp3",
+                mp3_filename=config.explanation_audio_dir,
             )
 
         st.success("Uhg, that was hard! But here is your explanation")
